@@ -12,12 +12,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const db = require("./models/index");
 db.sequelize.sync();
-// db.sequelize.sync({ force: true }).then(() => {
-//     console.log("Drop and re-sync db.");
-// });
 
+// Route
 app.use('/schedule', sendEmailController)
 
+// Create connection
 app.listen(process.env.PORT, (err) => {
     if(err){
         console.log('Not connected to PORT '+process.env.PORT);
