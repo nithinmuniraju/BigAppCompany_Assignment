@@ -25,8 +25,6 @@ module.exports = {
                 html: text,
             };
             transporter.sendMail(message, async (err, info) => {
-                console.log('err', err);
-                console.log('info', info);
                 if(err && typeof err != "undefined"){
                     const obj = {
                         email_id: id,
