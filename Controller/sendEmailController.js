@@ -186,15 +186,24 @@ exports.getAllFailedEmail = async (req, res, next) => {
     
         const getAllDetails = await failedEmailSchems.findAndCountAll({
             offset: offsetValue,
-            limit: limitValue,
-            include: emailSchems
+            limit: limitValue
         });
 
+        const getIds = getAllDetails.rows.map( el => {
+            console.log('el', el.dataValues.id);
+            return el.dataValues.email_id;
+        })
+
+        const getFailedEmail = await emailSchems.findAll({
+            where: {
+                id: getIds
+            }
+        })
         if(getAllDetails.count > 0){
             res.status(200).send({
                 success: true,
-                message: 'Data Successful',
-                Data: getAllDetails
+                message: 'Data Retrived Successful',
+                Data: getFailedEmail
             })
         } else {
             res.status(400).send({
