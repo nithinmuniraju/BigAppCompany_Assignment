@@ -1,6 +1,7 @@
 
 const db = require("../models");
 const emailSchems = db.emails;
+const failedEmailSchems = db.failedEmails;
 
 const { validateUserEmail, cronHandler}  = require('../utils/helper');
 
@@ -28,7 +29,7 @@ exports.createMail = async (req, res, next) => {
         const createEmail = await emailSchems.create(emailData);
         if(createEmail){
             //Calling Cron function to schedule email job
-            cronHandler(schedule, to);
+            cronHandler(schedule, to, createEmail.id);
 
             res.status(200).send({
                 success: true,
@@ -176,28 +177,34 @@ exports.deleteSchedule = async (req, res, next) => {
     }
 }
 
-// async function scheduleEmail(schedule, to) {
-//     try{
-//         /**
-//          * Cron runs for scheduled datetime
-//          * Format Ex: 2020-12-31T20:19:01/2020-12-31 20:19:01
-//          * For every scheduled time cron gets triggred
-//         */
-//         const scheduleDate = new Date(schedule).toString().split(' ');
-//         const week = scheduleDate[0];
-//         const month = scheduleDate[1];
-//         const day = scheduleDate[2];
+exports.getAllFailedEmail = async (req, res, next) => {
+    try{
+        const { limit, offset, page} = req.query;
+        const limitValue = !limit ? 10 : parseInt(limit);
+        const offsetValue = !offset ? 0: parseInt(offset);
+    
+    
+        const getAllDetails = await failedEmailSchems.findAndCountAll({
+            offset: offsetValue,
+            limit: limitValue,
+            include: emailSchems
+        });
 
-//         const getTime = scheduleDate[4].split(':');
-        
-//         const hours = getTime[0];
-//         const minute = getTime[1];
-//         const sec = getTime[2];
-
-//         job  = cron.schedule(`${sec} ${minute} ${hours} ${day} ${month} ${week}`, async () => {
-//             sendMail(`Happy New Year`, "Hello BigAppCompant, Happy New Year", to);
-//         });
-//     } catch(err) {
-//         console.log('ScheduleEmailException::', err);
-//     }
-// }
+        if(getAllDetails.count > 0){
+            res.status(200).send({
+                success: true,
+                message: 'Data Successful',
+                Data: getAllDetails
+            })
+        } else {
+            res.status(400).send({
+                success: false,
+                message: 'No Data Found',
+                Data: []
+            })
+        }
+    } catch(err) {
+        console.log('GetAllFailedEmail::', err);
+        res.status(400).send('Somthing went wrong!!')
+    }
+}

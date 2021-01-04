@@ -20,5 +20,10 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.emails = require("./emailSchema")(sequelize, Sequelize);
+db.failedEmails = require("./emailFailedSchems")(sequelize, Sequelize);
 
+db.failedEmails.hasMany(db.emails, {
+    foreignKey: "id",
+    timestamp: false 
+})
 module.exports = db;

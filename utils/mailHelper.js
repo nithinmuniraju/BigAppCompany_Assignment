@@ -1,10 +1,13 @@
 const nodemailer = require('nodemailer');
 
+const db = require("../models");
+const failedEmailSchems = db.failedEmails;
+
 const defaultMailingList = "test@test.com";
 const senderEmail = "noReply.com";
 
 module.exports = {
-    sendMail: async (subject, text, to = defaultMailingList) => {
+    sendMail: async (subject, text, to = defaultMailingList, id) => {
         try {
             const transporter = nodemailer.createTransport({
                 host: process.env.MAIL_HOST,
@@ -21,7 +24,18 @@ module.exports = {
                 text: subject,
                 html: text,
             };
-            transporter.sendMail(message, () => {});
+            transporter.sendMail(message, async (err, info) => {
+                console.log('err', err);
+                console.log('info', info);
+                if(err && typeof err != "undefined"){
+                    const obj = {
+                        email_id: id,
+                        is_falied: "1"
+                    }
+                    await failedEmailSchems.create(obj);
+                    return err;
+                }
+            });
         } catch (e) {
             console.log('MailException::', e);
         }

@@ -14,4 +14,6 @@ router.get('/getbyid', emailController.getEmailById);
 
 router.post('/delete', emailController.deleteSchedule);
 
+router.get('/getfailed', emailController.getAllFailedEmail);
+
 module.exports = router;

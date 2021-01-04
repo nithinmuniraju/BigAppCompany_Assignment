@@ -6,7 +6,7 @@ const validateUserEmail = function (email) {
     return re.test(String(email).toLowerCase());
 }
 
-const cronHandler = function(schedule, to){
+const cronHandler = function(schedule, to, id){
     try{
         /**
          * Cron runs for scheduled datetime
@@ -25,7 +25,7 @@ const cronHandler = function(schedule, to){
         const sec = getTime[2];
 
         job  = cron.schedule(`${sec} ${minute} ${hours} ${day} ${month} ${week}`, async () => {
-            sendMail(`Happy New Year`, "Hello BigAppCompant, Happy New Year", to);
+            sendMail(`Happy New Year`, "Hello BigAppCompant, Happy New Year", to, id);
         });
     } catch(err) {
         console.log('ScheduleEmailException::', err);

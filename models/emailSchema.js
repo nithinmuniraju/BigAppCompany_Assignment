@@ -8,14 +8,6 @@ module.exports = (sequelize, Sequelize) => {
         },
         schedule: {
             type: Sequelize.STRING
-        },
-        createdAt: {
-            type: 'TIMESTAMP',
-            allowNull: false
-          },
-        updatedAt: {
-            type: 'TIMESTAMP',
-            allowNull: false
         }
     });
     return EmailSchema;
