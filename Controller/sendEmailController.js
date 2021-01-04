@@ -190,11 +190,12 @@ exports.getAllFailedEmail = async (req, res, next) => {
         });
 
         const getIds = getAllDetails.rows.map( el => {
-            console.log('el', el.dataValues.id);
             return el.dataValues.email_id;
         })
 
-        const getFailedEmail = await emailSchems.findAll({
+        const getFailedEmail = await emailSchems.findAndCountAll({
+            offset: offsetValue,
+            limit: limitValue,
             where: {
                 id: getIds
             }
